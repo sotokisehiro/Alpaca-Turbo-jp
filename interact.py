@@ -47,14 +47,16 @@ class Process(PopenSpawn):
 
     def recvuntil(self, data):
         """Recv data until a pattern is found"""
-        data = data if isinstance(data, bytes) else data.encode("latin")
+        data = data if isinstance(data, bytes) else data.encode("utf-8")
         info = b""
         while data not in info:
             info += self.read(1)
+            # print(info)
         return info
 
     def recv(self, *cfg):
         data = self.read(*cfg)
+        # print(data)
         return data
 
     def interactive(self, *cfg):
