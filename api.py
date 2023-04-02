@@ -21,7 +21,7 @@ assistant = Assistant()
 
 ################################
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:4200")
+socketio = SocketIO(app, cors_allowed_origins="*")
 personas = Personas("./prompts.json")
 
 
@@ -75,6 +75,7 @@ def list_models():
 @app.route("/load_model/<int:model_idx>")
 def load_model(model_idx):
     assistant.model_idx = model_idx
+    assistant.unload_model()
     resp = assistant.load_model()
     return jsonify({"status": resp})
 
