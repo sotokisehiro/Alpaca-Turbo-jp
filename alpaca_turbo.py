@@ -127,10 +127,15 @@ class Assistant:
 
     @staticmethod
     def get_bin_path():
-        if os.path.exists("chat"):
-            return "./chat"
-        elif os.path.exists("/chat"):
-            return "/chat"
+        system_name = platform.system()
+        if os.path.exists("/main"):
+            name = "/main"
+        elif system_name == "Linux":
+            name = "bin/main"
+        elif system_name == "Windows":
+            name = "bin/main.exe"
+        elif system_name == "Darwin":
+            name = "bin/mac"
         else:
             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
@@ -141,17 +146,12 @@ class Assistant:
             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        # system_name = platform.system()
-        # if system_name == "Linux":
-        #     name = "linux"
-        # elif system_name == "Windows":
-        #     name = "win.exe"
-        # elif system_name == "Darwin":
-        #     name = "mac"
+
         # elif system_name == "Android":
         #     return "Android"
         # else:
         #     exit()
+        return name
 
     @property
     def command(self):

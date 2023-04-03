@@ -8,15 +8,18 @@
 
 https;//github.comViperX7/Alpaca-Turbo
 """
-
 import psutil
 from alpaca_turbo import Assistant
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 from helpers.prompts import Personas
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path="",
+    static_folder="templates",
+)
 assistant = Assistant()
 
 ################################
@@ -56,11 +59,11 @@ def unload_model():
     result = assistant.safe_kill()
     return jsonify({"result": result})
 
+
 @app.route("/remove_all_chat")
 def remove_all_chat():
     result = assistant.remove_all_chat()
     return jsonify({"result": result})
-
 
 
 ########################
@@ -86,8 +89,6 @@ def stop():
     return jsonify({"status": res})
 
 
-
-
 @app.route("/status")
 def status():
     cpu_percent = psutil.cpu_percent()
@@ -95,13 +96,13 @@ def status():
     total_ram = psutil.virtual_memory().total / (1024**3)  # convert to GB
     total_cores = psutil.cpu_count(logical=False)
     total_threads = psutil.cpu_count(logical=True)
-    threads_above_80 = len(
-        [
-            thread
-            for thread in psutil.process_iter(attrs=["pid", "name", "cpu_percent"])
-            if thread.info["cpu_percent"] > 80
-        ]
-    )
+    # threads_above_80 = len(
+    #     [
+    #         thread
+    #         for thread in psutil.process_iter(attrs=["pid", "name", "cpu_percent"])
+    #         if thread.info["cpu_percent"] > 80
+    #     ]
+    # )
     return jsonify(
         {
             "cpu_percent": cpu_percent,
@@ -109,7 +110,7 @@ def status():
             "total_ram": total_ram,
             "total_cores": total_cores,
             "total_threads": total_threads,
-            "threads_above_80": threads_above_80,
+            # "threads_above_80": threads_above_80,
             "is_model_loaded": assistant.is_loaded,
             "turbo_status": assistant.current_state,
         }
@@ -208,5 +209,15 @@ def update_persona(name):
     return jsonify({"success": True})
 
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", allow_unsafe_werkzeug=True, debug=True)
+    socketio.run(
+        app,
+        host="0.0.0.0",
+        allow_unsafe_werkzeug=True,
+        debug=True,
+    )
